@@ -467,7 +467,7 @@ Repeat::~Repeat()
 void Repeat::startWithTarget(Node *target)
 {
     _total = 0;
-    _nextDt = _innerAction->getDuration()/_duration;
+    _nextDt = _duration > 0.0 ? _innerAction->getDuration()/_duration : 0.01f;
     ActionInterval::startWithTarget(target);
     _innerAction->startWithTarget(target);
 }
@@ -526,6 +526,11 @@ void Repeat::update(float dt)
     {
         if (!(sendUpdateEventToScript(fmodf(dt * _times,1.0f), _innerAction)))
             _innerAction->update(fmodf(dt * _times,1.0f));
+        //HACK: SLAVAK 
+        if (_actionInstant)
+        {
+            if (_total++ >= _times)
+                _innerAction->stop();
     }
 }
 
